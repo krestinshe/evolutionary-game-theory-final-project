@@ -1,0 +1,253 @@
+---
+title: "Appendix B: Replicator Dynamic Phase Diagram Generator Code (R)"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+```
+
+```{r packages}
+# packages used
+library(EvolutionaryGames)
+library(rgl)
+```
+
+### Mouse, Hawk, Retaliator, Prober-Retaliator (MS&P's payoffs)
+```{r}
+# create the payoff matrix for the game
+A <- matrix(c(29, 19.5, 29, 17.2,
+              80, -19.5, -18.1, -18.9,
+              29, -22.3, 29, 23.1, 
+              56.7, -20.1, 26.9, 21.9), 
+            4, byrow=TRUE)
+
+# specify the names of the strategies, in order of column
+strategies <- c("Mouse", "Hawk", "Retaliator", "Prober-Retaliator")
+
+# specify the initial population state
+state <- c(.25, .25, .25, .25)
+
+# plot phase diagram (3D for 4 strategies)
+phaseDiagram4S(A, Replicator, NULL, state, noRGL = T, strategies)
+# if you run with noRGL = F, the rgl package will create an interactive 3D diagram
+# that you can rotate! 
+```
+
+### Mouse, Hawk, Retaliator (MS&P)
+```{r}
+A <- matrix(c(29, 19.5, 29, 
+              80, -19.5, -18.1,
+              29, -22.3, 29), 
+            3, byrow=TRUE)
+
+strategies <- c("Mouse", "Hawk", "Retaliator")
+
+state <- matrix(c(.33, .33, .34), 1, 3, byrow = T)
+
+# this one is 3D for 2 strategies
+# it also has a contour map showing the speed of change 
+# and a vector field showing the direction
+phaseDiagram3S(A, dynamic = Replicator, params = NULL, trajectories = state, 
+               contour = T, vectorField = T, strategies)
+
+# you can also find the set of ESSs and graph their paths
+ESset(A, strategies)
+```
+
+### Mouse, Hawk, Prober-Retaliator (MS&P)
+```{r}
+A <- matrix(c(29, 19.5, 17.2,
+              80, -19.5, -18.9,
+              56.7, -20.1, 21.9), 
+            3, byrow=TRUE)
+
+strategies <- c("Mouse", "Hawk", "Prober-Retaliator")
+
+ESset(A, strategies)
+
+state <- matrix(c(.34, .33, .33), 1, 3, byrow = T)
+
+phaseDiagram3S(A, dynamic = Replicator, params = NULL, trajectories = state, 
+               contour = F, vectorField = F, strategies)
+```
+
+### Mouse, Retaliator, Prober-Retaliator (MS&P)
+This one has no ESS. 
+```{r}
+A <- matrix(c(29, 29, 17.2,
+              29, 29, 23.1, 
+              56.7, 26.9, 21.9), 
+            3, byrow=TRUE)
+
+strategies <- c("Mouse", "Retaliator", "Prober-Retaliator")
+
+state <- matrix(c(.34, .33, .33), 1, 3, byrow = T)
+
+phaseDiagram3S(A, dynamic = Replicator, params = NULL, trajectories = state, 
+               contour = F, vectorField = F, strategies)
+```
+
+### Hawk, Retaliator, Prober-Retaliator (MS&P)
+```{r}
+A <- matrix(c(-19.5, -18.1, -18.9,
+              -22.3, 29, 23.1, 
+              -20.1, 26.9, 21.9), 
+            3, byrow=TRUE)
+
+strategies <- c("Hawk", "Retaliator", "Prober-Retaliator")
+
+ESset(A, strategies)
+```
+
+# Phase Diagrams from My Computer Simulation
+
+### Mouse, Hawk, Retaliator, Prober-Retaliator (my payoffs)
+```{r}
+A <- matrix(c(30, 19.75, 30, 15.3,
+              79.75, -20.1, -15.2, -14.9,
+              30, -25.3, 30, 12.2, 
+              67.6, -25.7, 14.9, 3.1), 
+            4, byrow=TRUE)
+
+strategies <- c("Mouse", "Hawk", "Retaliator", "Prober-Retaliator")
+
+state <- c(0.25, 0.25, 0.25, 0.25)
+
+phaseDiagram4S(A, Replicator, NULL, state, noRGL = T, strategies)
+```
+
+
+### Mouse, Hawk, Retaliator, Prober-Retaliator (my, Mouse starts at 0)
+```{r}
+state <- c(0, 0.33, 0.33, 0.33)
+
+phaseDiagram4S(A, Replicator, NULL, state, noRGL = T, strategies)
+```
+
+### Mouse, Hawk, Retaliator, Prober-Retaliator (my, Mouse starts at 0.01)
+```{r}
+state <- c(0.01, 0.33, 0.33, 0.33)
+
+phaseDiagram4S(A, Replicator, NULL, state, noRGL = T, strategies)
+```
+
+### Mouse, Hawk, Retaliator, Prober-Retaliator (my, Mouse starts at 0.04)
+```{r}
+state <- c(0.04, 0.32, 0.32, 0.32)
+
+phaseDiagram4S(A, Replicator, NULL, state, noRGL = T, strategies)
+```
+
+
+# Phase Diagrams from Changing Model Parameters
+
+### Increasing the probability of serious injury (p_i = 0.90)
+```{r}
+A <- matrix(c(30, 19.75, 30, 15.4,
+              79.75, -10.1, 63.4, 59.8,
+              30, -83.9, 30, -69.5, 
+              67.6, -80.3, 53.8, -11.7), 
+            4, byrow=TRUE)
+
+strategies <- c("Mouse", "Hawk", "Retaliator", "Prober-Retaliator")
+
+state <- c(0.25, 0.25, 0.25, 0.25)
+
+phaseDiagram4S(A, Replicator, NULL, state, noRGL = T, strategies)
+```
+
+### Increasing the probability of probing behavior (p_p = 0.5)
+```{r}
+A <- matrix(c(30, 19.75, 30, 19.2,
+              79.75, -20.2, -14.8, -15.3,
+              30, -25.6, 30, -23.5, 
+              79.2, -25.1, -13.8, -20.4), 
+            4, byrow=TRUE)
+
+strategies <- c("Mouse", "Hawk", "Retaliator", "Prober-Retaliator")
+
+state <- c(0.25, 0.25, 0.25, 0.25)
+
+phaseDiagram4S(A, Replicator, NULL, state, noRGL = T, strategies)
+```
+
+
+### Increasing the cost of serious injury (c = 500)
+```{r}
+A <- matrix(c(30, 19.75, 30, 15.4,
+              79.75, -220.2, -205.8, -205.3,
+              30, -234.6, 30, -53.4, 
+              67.6, -235.1, -42.5, -97.2), 
+            4, byrow=TRUE)
+
+strategies <- c("Mouse", "Hawk", "Retaliator", "Prober-Retaliator")
+
+state <- c(0.1, 0.7, 0.1, 0.1)
+
+phaseDiagram4S(A, Replicator, NULL, state, noRGL = T, strategies)
+```
+
+### Increasing the payoff of winning (v = 120)
+```{r}
+A <- matrix(c(60, 19.75, 60, 19.2,
+              139.75, 10, 15, 14,
+              60, 5.5, 60, 41.3, 
+              123.9, 5.4, 46.2, 34), 
+            4, byrow=TRUE)
+
+strategies <- c("Mouse", "Hawk", "Retaliator", "Prober-Retaliator")
+
+state <- c(0.25, 0.25, 0.25, 0.25)
+
+phaseDiagram4S(A, Replicator, NULL, state, noRGL = T, strategies)
+```
+
+### Decreasing the probability of retaliation (p_r = 0.5)
+```{r}
+A <- matrix(c(30, 19.75, 30, 15.4,
+              79.75, -20.2, 14.5, -8.6,
+              30, -54.4, 30, -3.2, 
+              67.6, -32.4, 21.5, -2), 
+            4, byrow=TRUE)
+
+strategies <- c("Mouse", "Hawk", "Retaliator", "Prober-Retaliator")
+
+state <- c(0.25, 0.25, 0.25, 0.25)
+
+phaseDiagram4S(A, Replicator, NULL, state, noRGL = T, strategies)
+```
+
+### Increasing the maximum payoff of saving time and energy, producing longer contests (u_init = 40)
+```{r}
+A <- matrix(c(30, 39.75, 30, 30.9,
+              99.75, -10.2, 29.9, 4.2,
+              30, -51.2, 30, -23.6, 
+              89.9, -24.9, 24.2, -8.8), 
+            4, byrow=TRUE)
+
+strategies <- c("Mouse", "Hawk", "Retaliator", "Prober-Retaliator")
+
+state <- c(0.25, 0.25, 0.25, 0.25)
+
+phaseDiagram4S(A, Replicator, NULL, state, noRGL = T, strategies)
+```
+
+### Decreasing the maximum payoff of saving time and energy, producing shorter contests (u_init = 5)
+```{r}
+A <- matrix(c(30, 4.75, 30, 19.1,
+              64.75, -27.6, 18.8, -2.1,
+              30, -50.4, 30, 19.8, 
+              43.1, -37.1, 27.7, 18.8), 
+            4, byrow=TRUE)
+
+strategies <- c("Mouse", "Hawk", "Retaliator", "Prober-Retaliator")
+
+state <- c(0.25, 0.25, 0.25, 0.25)
+
+phaseDiagram4S(A, Replicator, NULL, state, noRGL = T, strategies)
+
+state <- c(0.1, 0.1, 0.4, 0.4)
+
+phaseDiagram4S(A, Replicator, NULL, state, noRGL = T, strategies)
+```
